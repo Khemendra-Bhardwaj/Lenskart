@@ -2,21 +2,66 @@ version: '3.3'
 
 # TODO : health checkups & retry mechanisms for database and backend & frontend services 
 services:
-  # PostgreSQL Database
-  db:
+  # PostgreSQL Databases
+  user-db:
     image: postgres:14
-    container_name: postgres-db
+    container_name: user-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: lenskartDB
+      POSTGRES_DB: userDB
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - user_data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  product-db:
+    image: postgres:14
+    container_name: product-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: productDB
+    ports:
+      - "5433:5432"
+    volumes:
+      - product_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orders-db:
+    image: postgres:14
+    container_name: orders-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ordersDB
+    ports:
+      - "5434:5432"
+    volumes:
+      - orders_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Backend Express API
   backend:
@@ -28,37 +73,40 @@ services:
     environment:
       # NODE_ENV: production
       PORT: 4000
-      DB_PORT: 5432
-      DB_HOST: db
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: lenskartDB
+      USER_DB_PORT: 5432
+      USER_DB_HOST: user-db
+      USER_DB_USER: postgres
+      USER_DB_PASSWORD: postgres
+      USER_DB_NAME: userDB
+      PRODUCT_DB_PORT: 5432
+      PRODUCT_DB_HOST: product-db
+      PRODUCT_DB_USER: postgres
+      PRODUCT_DB_PASSWORD: postgres
+      PRODUCT_DB_NAME: productDB
+      ORDERS_DB_PORT: 5432
+      ORDERS_DB_HOST: orders-db
+      ORDERS_DB_USER: postgres
+      ORDERS_DB_PASSWORD: postgres
+      ORDERS_DB_NAME: ordersDB
     ports:
       - "4000:4000"
     depends_on:
-      - db
+      - user-db
+      - product-db
+      - orders-db
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Frontend React App
-  # frontend:
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #   container_name: react-app
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3000:80"
-  #   # environment:
-  #   #   REACT_APP_API_URL: http://localhost:4000/api
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - app-network
+volumes:
+  user_data:
+  product_data:
+  orders_data:
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  postgres_data:
