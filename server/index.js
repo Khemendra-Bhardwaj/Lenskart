@@ -54,68 +54,10 @@ app.get('/users/:email', async (req, res) => {
 });
 
 
-// app.get('/users', async (req, res) => {
-//   try {
-//     const { rows } = await userPool.query('SELECT id, name, email, created_at FROM users');
-//     res.json(rows);
-//   } catch (error) {
-//     console.error('Error fetching users:', error);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
-
-// app.post('/users', async (req, res) => {
-//   const { name, email, password } = req.body;
-//   try {
-//     const { rows } = await userPool.query(
-//       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, created_at',
-//       [name, email, password]
-//     );
-//     res.status(201).json(rows[0]);
-//   } catch (error) {
-//     console.error('Error creating user:', error);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
-
-
 app.get('/', (req, res) => {
   res.send('Hello, PostgreSQL with Express!');
 });
 
-
-
-// const initializeDatabase = async () => {
-//   try {
-//     // Create tables
-//     await User.createTable();
-//     console.log('User table created successfully');
-
-//     await Wishlist.createTable();
-//     console.log('Wishlist table created successfully');
-
-//     await Product.createTable();
-//     console.log('Product table created successfully');
-
-//     // Start the server
-//     app.listen(PORT, () => {
-//       console.log(`Server running on http://localhost:${PORT}`);
-//     });
-//   } catch (err) {
-//     console.error('Error initializing database:', err);
-//     process.exit(1); // Exit the process if initialization fails
-//   }
-// };
-
-
-
-// initializeDatabase();
-
-// // Start server
-// app.listen(PORT, async () => {
-//   await initializeDatabase()
-//   console.log(`Server running on http://localhost:${PORT}`);
-// });
 
 
 app.listen(PORT, async () => {
