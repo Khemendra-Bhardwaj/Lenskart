@@ -1,5 +1,8 @@
 const express = require('express');
-const {pool, createTables, userPool} = require('./db/db');
+// const {pool, createTables, userPool} = require('./db/init_db');
+const { User} = require("./db/userDB/models/User")
+const {checkDatabaseHealth} = require("./db/healthCheck")
+// const {User}
 const cors = require('cors');
 const app = express();
 
@@ -36,6 +39,22 @@ app.get('/getSomething', (req,res)=>{
 })
 
 
+app.get('/users/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await User.findByEmail(email);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 // app.get('/users', async (req, res) => {
 //   try {
 //     const { rows } = await userPool.query('SELECT id, name, email, created_at FROM users');
@@ -69,6 +88,6 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, async () => {
-  await createTables()
+  // await createTables()
   console.log(`Server running on http://localhost:${PORT}`);
 });
