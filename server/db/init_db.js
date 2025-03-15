@@ -29,15 +29,23 @@ const userPool = new Pool(userDBConfig);
 // Initialize productPool
 const productPool = new Pool(productDBConfig);
 
+
+
+
+
+
 // Export pools and models
 module.exports = {
   userPool,
   productPool,
   User: require('./userDB/models/User'),
-  // Address: require('./userDB/models/Address'),
-  // Wishlist: require('./userDB/models/Wishlist'),
-  // Cart: require('./userDB/models/Cart'),
+  Wishlist: require('./userDB/models/Wishlist'),
   Product: require('./productDB/models/Product'),
+  // User: require('./userDB/models/User'),
+  // // // Address: require('./userDB/models/Address'),
+  // Wishlist: require('./userDB/models/Wishlist'),
+  // // // Cart: require('./userDB/models/Cart'),
+  // Product: require('./productDB/models/Product'),
   // ProductInventory: require('./productDB/models/ProductInventory'),
   // ProductReview: require('./productDB/models/ProductReview'),
   // Category: require('./productDB/models/Category'),

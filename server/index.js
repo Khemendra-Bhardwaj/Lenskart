@@ -2,6 +2,7 @@ const express = require('express');
 // const {pool, createTables, userPool} = require('./db/init_db');
 const { User} = require("./db/userDB/models/User")
 const {checkDatabaseHealth} = require("./db/healthCheck")
+const initializeDatabase = require("./db/init_tables")
 // const {User}
 const cors = require('cors');
 const app = express();
@@ -13,8 +14,6 @@ const PORT = process.env.PORT || 4000;
 app.use(express.json());
 
 app.use(cors());
-
-// Test route
 
 
 app.get('/health', async (req, res) => {
@@ -86,8 +85,45 @@ app.get('/', (req, res) => {
 
 
 
-// Start server
+// const initializeDatabase = async () => {
+//   try {
+//     // Create tables
+//     await User.createTable();
+//     console.log('User table created successfully');
+
+//     await Wishlist.createTable();
+//     console.log('Wishlist table created successfully');
+
+//     await Product.createTable();
+//     console.log('Product table created successfully');
+
+//     // Start the server
+//     app.listen(PORT, () => {
+//       console.log(`Server running on http://localhost:${PORT}`);
+//     });
+//   } catch (err) {
+//     console.error('Error initializing database:', err);
+//     process.exit(1); // Exit the process if initialization fails
+//   }
+// };
+
+
+
+// initializeDatabase();
+
+// // Start server
+// app.listen(PORT, async () => {
+//   await initializeDatabase()
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
+
+
 app.listen(PORT, async () => {
-  // await createTables()
-  console.log(`Server running on http://localhost:${PORT}`);
+  try {
+    await initializeDatabase(); // Initialize the database
+    console.log(`Server running on http://localhost:${PORT}`);
+  } catch (err) {
+    console.error('Failed to initialize database:', err);
+    process.exit(1); // Exit the process if initialization fails
+  }
 });
