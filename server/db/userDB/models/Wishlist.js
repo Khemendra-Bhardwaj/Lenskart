@@ -1,4 +1,7 @@
-const { userPool } = require('../../init_db');
+// const { userPool } = require('../../init_db');
+const poolManager = require('../../poolManager');
+const userPool = poolManager.getUserPool();
+
 
 class Wishlist {
   static async createTable() {
@@ -7,7 +10,7 @@ class Wishlist {
       await client.query(`
         CREATE TABLE IF NOT EXISTS Wishlist (
           id SERIAL PRIMARY KEY,
-          name VARCHAR(100)
+          anopthername VARCHAR(100)
         );
       `);
       console.log('Wishlist table created successfully');
@@ -19,6 +22,6 @@ class Wishlist {
   }
 }
 
-module.exports = { Wishlist };
+module.exports =  Wishlist ;
 
 

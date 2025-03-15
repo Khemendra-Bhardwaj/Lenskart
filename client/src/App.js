@@ -5,16 +5,16 @@ import axios from 'axios';
 function App() {
   const [message, setMessage] = useState('Lol ! ');
 
-  useEffect(() => {
-    // Replace with your backend's URL
-    axios.get('http://localhost:4000/getSomething')
-      .then((response) => {
-        setMessage(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // Replace with your backend's URL
+  //   axios.get('http://localhost:4000/getSomething')
+  //     .then((response) => {
+  //       setMessage(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data:', error);
+  //     });
+  // }, []);
 
   return (
     <div style={{ textAlign: 'center', padding: '50px' }}>

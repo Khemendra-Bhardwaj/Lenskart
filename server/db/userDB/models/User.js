@@ -1,4 +1,6 @@
-const { userPool } = require('../../init_db');
+// db/userDB/models/User.js
+const poolManager = require('../../poolManager');
+const userPool = poolManager.getUserPool();
 
 class User {
   static async createTable() {
@@ -35,4 +37,4 @@ class User {
   }
 }
 
-module.exports = {User};
+module.exports = User;

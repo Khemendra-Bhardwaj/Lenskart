@@ -1,8 +1,12 @@
 const express = require('express');
 // const {pool, createTables, userPool} = require('./db/init_db');
 const { User} = require("./db/userDB/models/User")
+
+const jwt = require('jsonwebtoken');
+
 const {checkDatabaseHealth} = require("./db/healthCheck")
 const initializeDatabase = require("./db/init_tables")
+
 // const {User}
 const cors = require('cors');
 const app = express();
@@ -12,8 +16,8 @@ const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(express.json());
-
 app.use(cors());
+
 
 
 app.get('/health', async (req, res) => {
@@ -52,6 +56,8 @@ app.get('/users/:email', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 
 app.get('/', (req, res) => {

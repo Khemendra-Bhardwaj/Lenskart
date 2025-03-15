@@ -5,7 +5,6 @@ const checkDatabaseHealth = async () => {
     const results = {
       userDB: false,
       productDB: false,
-    //   ordersDB: false
     };
     
     try {
@@ -21,13 +20,6 @@ const checkDatabaseHealth = async () => {
     } catch (error) {
       console.error('Product database health check failed:', error);
     }
-    
-    // try {
-    //   await ordersPool.query('SELECT 1');
-    //   results.ordersDB = true;
-    // } catch (error) {
-    //   console.error('Orders database health check failed:', error);
-    // }
     
     return results;
   };
