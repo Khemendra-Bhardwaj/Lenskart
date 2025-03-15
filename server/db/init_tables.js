@@ -23,51 +23,30 @@ class User {
   }
 }
 
+
 class Wishlist {
-  static async createTable() {
-    const client = await userPool.connect();
-    try {
+    static async createTable() {
+      const client = await userPool.connect();
+      try {
+        // Drop the existing table (if it exists)
         await client.query('DROP TABLE IF EXISTS wishlists');
-        
-      await client.query(`
-        CREATE TABLE IF NOT EXISTS wishlists (
-          id SERIAL PRIMARY KEY,
-          wow VARCHAR(100),
-          name VARCHAR(20), 
-        );
-      `);
-      console.log('Wishlist table created successfully');
-    } catch (err) {
-      console.error('Error creating wishlist table:', err);
-    } finally {
-      client.release();
+  
+        // Create the new table
+        await client.query(`
+          CREATE TABLE wishlists (
+            id SERIAL PRIMARY KEY,
+            wow VARCHAR(100),
+            name VARCHAR(20)
+          );
+        `);
+        console.log('Wishlist table created successfully');
+      } catch (err) {
+        console.error('Error creating wishlist table:', err);
+      } finally {
+        client.release();
+      }
     }
   }
-}
-
-// class Wishlist {
-//     static async createTable() {
-//       const client = await userPool.connect();
-//       try {
-//         // Drop the existing table (if it exists)
-//         await client.query('DROP TABLE IF EXISTS wishlists');
-  
-//         // Create the new table
-//         await client.query(`
-//           CREATE TABLE wishlists (
-//             id SERIAL PRIMARY KEY,
-//             wow VARCHAR(100),
-//             name VARCHAR(20)
-//           );
-//         `);
-//         console.log('Wishlist table created successfully');
-//       } catch (err) {
-//         console.error('Error creating wishlist table:', err);
-//       } finally {
-//         client.release();
-//       }
-//     }
-//   }
 
 
 class Product {
@@ -80,7 +59,6 @@ class Product {
           name VARCHAR(100) NOT NULL,
           description TEXT,
           price DECIMAL(10, 2) NOT NULL,
-          category_id INT REFERENCES categories(id) ON DELETE SET NULL,
           stock_quantity INT NOT NULL DEFAULT 0,
           created_at TIMESTAMP DEFAULT NOW()
         );
