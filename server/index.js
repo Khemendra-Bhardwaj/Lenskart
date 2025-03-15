@@ -1,7 +1,7 @@
 const express = require('express');
 // const {pool, createTables, userPool} = require('./db/init_db');
 const { User} = require("./db/userDB/models/User")
-
+const authRoutes = require('./routes/auth');
 const jwt = require('jsonwebtoken');
 
 const {checkDatabaseHealth} = require("./db/healthCheck")
@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 4000;
 app.use(express.json());
 app.use(cors());
 
+app.use('/auth', authRoutes);
 
 
 app.get('/health', async (req, res) => {

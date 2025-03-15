@@ -1,6 +1,8 @@
 // db/userDB/models/User.js
 const poolManager = require('../../poolManager');
 const userPool = poolManager.getUserPool();
+const bcrypt = require('bcrypt');
+
 
 class User {
   static async createTable() {
@@ -23,6 +25,25 @@ class User {
     }
   }
 
+  static async register(name, email, password) {
+    const client = await userPool.connect();
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const result = await client.query(
+        'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
+        [name, email, hashedPassword]
+      );
+      return result.rows[0];
+    } catch (err) {
+      console.error('Error registering user:', err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+
+
   static async findByEmail(email) {
     const client = await userPool.connect();
     try {
@@ -35,6 +56,10 @@ class User {
       client.release();
     }
   }
+
+
+  
+
 }
 
 module.exports = User;
