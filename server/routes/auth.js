@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 
 
 router.post('/register', async (req, res) => {
-    console.log('Received request body:', req.body); // Log the request body
+    // console.log('Received request body:', req.body); // Log the request body
     const { name, email, password } = req.body;
     try {
       const user = await User.register(name, email, password);

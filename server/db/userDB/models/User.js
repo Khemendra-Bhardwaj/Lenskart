@@ -17,6 +17,7 @@ class User {
           created_at TIMESTAMP DEFAULT NOW()
         );
       `);
+      
       console.log('User table created successfully');
     } catch (err) {
       console.error('Error creating user table:', err);
@@ -42,8 +43,6 @@ class User {
     }
   }
 
-
-
   static async findByEmail(email) {
     const client = await userPool.connect();
     try {
@@ -56,9 +55,6 @@ class User {
       client.release();
     }
   }
-
-
-  
 
 }
 

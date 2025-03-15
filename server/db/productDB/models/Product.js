@@ -1,10 +1,10 @@
 // db/productDB/models/Product.js
 const poolManager = require('../../poolManager');
-const productPool = poolManager.getProductPool();
+const userPool = poolManager.getUserPool();
 
 class Product {
   static async createTable() {
-    const client = await productPool.connect();
+    const client = await userPool.connect();
     try {
       await client.query(`
         CREATE TABLE IF NOT EXISTS products (

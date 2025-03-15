@@ -1,13 +1,14 @@
 const express = require('express');
 // const {pool, createTables, userPool} = require('./db/init_db');
-const { User} = require("./db/userDB/models/User")
 const authRoutes = require('./routes/auth');
+const cartRoutes = require('./routes/cart');
+const wishlistRoutes = require('./routes/wishlist');
+
 const jwt = require('jsonwebtoken');
 
 const {checkDatabaseHealth} = require("./db/healthCheck")
 const initializeDatabase = require("./db/init_tables")
 
-// const {User}
 const cors = require('cors');
 const app = express();
 
@@ -19,6 +20,9 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth', authRoutes);
+app.use('/cart', cartRoutes); // Cart routes
+app.use('/wishlist', wishlistRoutes); // Wishlist routes
+// app.use('/cart', )
 
 
 app.get('/health', async (req, res) => {
@@ -36,28 +40,6 @@ app.get('/health', async (req, res) => {
     });
   }
 });
-
-
-app.get('/getSomething', (req,res)=>{
-  res.send("You Got Something !") 
-})
-
-
-app.get('/users/:email', async (req, res) => {
-  const { email } = req.params;
-  try {
-    const user = await User.findByEmail(email);
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: 'User not found' });
-    }
-  } catch (err) {
-    console.error('Error fetching user:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 
 
 
