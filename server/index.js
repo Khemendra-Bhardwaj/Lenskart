@@ -3,6 +3,7 @@ const express = require('express');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
 const wishlistRoutes = require('./routes/wishlist');
+const productRoutes = require('./routes/product');
 
 const jwt = require('jsonwebtoken');
 
@@ -22,9 +23,10 @@ app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/cart', cartRoutes); // Cart routes
 app.use('/wishlist', wishlistRoutes); // Wishlist routes
-// app.use('/cart', )
+app.use('/products', productRoutes);
 
 
+// TODO: Include the redis part 
 app.get('/health', async (req, res) => {
   try {
     const dbStatus = await checkDatabaseHealth();

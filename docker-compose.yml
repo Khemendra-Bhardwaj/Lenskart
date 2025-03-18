@@ -43,6 +43,15 @@ services:
       timeout: 5s
       retries: 5
 
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
+
   # orders-db:
   #   image: postgres:14
   #   container_name: orders-db
@@ -88,11 +97,15 @@ services:
       ORDERS_DB_USER: postgres
       ORDERS_DB_PASSWORD: postgres
       ORDERS_DB_NAME: ordersDB
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
     ports:
       - "4000:4000"
     depends_on:
       - user-db
       - product-db
+      - redis 
       # - orders-db
     networks:
       - app-network
@@ -105,7 +118,8 @@ services:
 volumes:
   user_data:
   product_data:
-  orders_data:
+  redis-data: 
+  # orders_data:
 
 networks:
   app-network:
