@@ -8,6 +8,8 @@ const productRoutes = require('./routes/product');
 const jwt = require('jsonwebtoken');
 
 const {checkDatabaseHealth} = require("./db/healthCheck")
+const {  initRedis, testRedisConnection } = require('./cache/init_cache'); // Import Redis client an
+
 const initializeDatabase = require("./db/init_tables")
 
 const cors = require('cors');
@@ -26,23 +28,27 @@ app.use('/wishlist', wishlistRoutes); // Wishlist routes
 app.use('/products', productRoutes);
 
 
-// TODO: Include the redis part 
 app.get('/health', async (req, res) => {
   try {
     const dbStatus = await checkDatabaseHealth();
+
+    // Check Redis connection
+    await testRedisConnection()
+    console.log('Redis is up');
+
     res.status(200).json({
       status: 'ok',
-      databases: dbStatus
+      databases: dbStatus,
+      redis: 'ok',
     });
-    console.log("All DBs Up")
+    console.log('All DBs and Redis are up');
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: 'Health check failed'
+      message: 'Health check failed',
     });
   }
 });
-
 
 
 app.get('/', (req, res) => {
@@ -50,11 +56,12 @@ app.get('/', (req, res) => {
 });
 
 
-
 app.listen(PORT, async () => {
   try {
     await initializeDatabase(); // Initialize the database
+    await initRedis();
     console.log(`Server running on http://localhost:${PORT}`);
+    
   } catch (err) {
     console.error('Failed to initialize database:', err);
     process.exit(1); // Exit the process if initialization fails
