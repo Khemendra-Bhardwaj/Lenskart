@@ -14,11 +14,36 @@ redisClient.on('error', (err) => {
   console.error('Redis error:', err);
 });
 
+
+// TODO: Make testRedisConnection and initializeCache member function 
 // Connect to Redis
-redisClient.connect();
+const testRedisConnection = async () => {
+  try {
+    await redisClient.ping();
+    console.log('Redis is UP ');
+  } catch (err) {
+    console.error('Failed to connect to Redis:', err);
+    throw err;
+  }
+};
+
+
+async function initializeCache() {
+    try {
+      await redisClient.connect();
+      console.log("Connected to Redis");
+    } catch (error) {
+      console.error("Failed to connect to Redis:", error);
+    }
+  }
+
+
 
 // Multi-level cache class
 class MultiCache {
+
+    // initialize multicache 
+
   // Get data from cache
   static async get(key) {
     // Check L1 cache
@@ -62,4 +87,4 @@ class MultiCache {
   }
 }
 
-module.exports = MultiCache;
+module.exports = {MultiCache, initializeCache, testRedisConnection  };

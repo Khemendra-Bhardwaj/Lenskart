@@ -8,7 +8,8 @@ const productRoutes = require('./routes/product');
 const jwt = require('jsonwebtoken');
 
 const {checkDatabaseHealth} = require("./db/healthCheck")
-const {  initRedis, testRedisConnection } = require('./cache/init_cache'); // Import Redis client an
+const {initializeCache, testRedisConnection} = require('./cache/multiCache')
+
 
 const initializeDatabase = require("./db/init_tables")
 
@@ -34,8 +35,6 @@ app.get('/health', async (req, res) => {
 
     // Check Redis connection
     await testRedisConnection()
-    console.log('Redis is up');
-
     res.status(200).json({
       status: 'ok',
       databases: dbStatus,
@@ -59,7 +58,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, async () => {
   try {
     await initializeDatabase(); // Initialize the database
-    await initRedis();
+    await initializeCache();
     console.log(`Server running on http://localhost:${PORT}`);
     
   } catch (err) {

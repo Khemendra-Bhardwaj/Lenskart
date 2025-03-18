@@ -1,7 +1,7 @@
 const express = require('express');
 const Product = require('../db/productDB/models/Product');
 // const {redisClient} = require('../cache/init_cache');
-const MultiCache  = require("../cache/multiCache")
+const {MultiCache}  = require("../cache/multiCache")
 const router = express.Router();
 
 // TODO: FROM a user perspective, user will only be able to hit "get" api, rest would be from admin side 
