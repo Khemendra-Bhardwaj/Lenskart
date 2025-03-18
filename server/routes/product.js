@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../db/productDB/models/Product');
-const {redisClient} = require('../cache/init_cache');
+// const {redisClient} = require('../cache/init_cache');
+const MultiCache  = require("../cache/multiCache")
 const router = express.Router();
 
 // TODO: FROM a user perspective, user will only be able to hit "get" api, rest would be from admin side 
@@ -12,8 +13,8 @@ router.post('/add', async (req, res) => {
 
   try {
     const product = await Product.addProduct(name, description, price, stock_quantity);
-    await redisClient.del(ALL_PRODUCTS_CACHE_KEY);
-
+    await MultiCache.del(ALL_PRODUCTS_CACHE_KEY);
+    // await MultiCache.s
     res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -28,9 +29,12 @@ router.put('/update/:id', async (req, res) => {
   try {
     const product = await Product.updateProduct(id, updates);
 
-    // Invalidate the cache for all products and this specific product
-    await redisClient.del(ALL_PRODUCTS_CACHE_KEY);
-    await redisClient.del(`product:${id}`);
+    // Invalidate cache
+    await MultiCache.del(ALL_PRODUCTS_CACHE_KEY); // Invalidate all products cache
+    await MultiCache.del(`product:${id}`); // Invalidate single product cache
+
+
+    
 
 
     res.json(product);
@@ -46,8 +50,10 @@ router.delete('/delete/:id', async (req, res) => {
   try {
     const product = await Product.deleteProduct(id);
      // Invalidate the cache for all products and this specific product
-     await redisClient.del(ALL_PRODUCTS_CACHE_KEY);
-     await redisClient.del(`product:${id}`);
+     // Invalidate cache
+     await MultiCache.del(ALL_PRODUCTS_CACHE_KEY); // Invalidate all products cache
+     await MultiCache.del(`product:${id}`); // Invalidate single product cache
+
 
     res.json(product);
   } catch (err) {
@@ -58,22 +64,19 @@ router.delete('/delete/:id', async (req, res) => {
 // Get All Products
 router.get('/', async (req, res) => {
   try {
-    const cachedProducts = await redisClient.get(ALL_PRODUCTS_CACHE_KEY);
+    const cachedProducts = await MultiCache.get(ALL_PRODUCTS_CACHE_KEY);
     if (cachedProducts) {
-      console.log('Cache hit: Returning products from Redis');
-      return res.json(JSON.parse(cachedProducts));
+      return res.json(cachedProducts);
     }
 
     // Cache miss: Fetch from database
-    console.log('Cache miss: Fetching products from database');
     const products = await Product.getAllProducts();
 
-    // Cache the products in Redis
-    await redisClient.set(ALL_PRODUCTS_CACHE_KEY, JSON.stringify(products), {
-      EX: 3600, // Set expiration time (1 hour)
-    });
+    // Store in cache
+    await MultiCache.set(ALL_PRODUCTS_CACHE_KEY, products);
 
     res.json(products);
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -86,24 +89,20 @@ router.get('/get/:id', async (req, res) => {
   try {
     const cacheKey = `product:${id}`;
 
-    // Check Redis cache
-    const cachedProduct = await redisClient.get(cacheKey);
+    // Check cache first
+    const cachedProduct = await MultiCache.get(cacheKey);
     if (cachedProduct) {
-      console.log('Cache hit: Returning product from Redis');
-      return res.json(JSON.parse(cachedProduct));
+      return res.json(cachedProduct);
     }
 
     // Cache miss: Fetch from database
-    console.log('Cache miss: Fetching product from database');
     const product = await Product.getProductById(id);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Cache the product in Redis
-    await redisClient.set(cacheKey, JSON.stringify(product), {
-      EX: 3600, // Set expiration time (1 hour)
-    });
+    // Store in cache
+    await MultiCache.set(cacheKey, product);
 
     res.json(product);
   } catch (err) {
