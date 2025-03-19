@@ -1,6 +1,6 @@
 const express = require('express');
 const Wishlist = require('../db/userDB/models/Wishlist');
-const { MultiCache } = require('../cache/multiCache');
+
 const authenticateToken = require('../middleware/authenticateToken');
 const router = express.Router();
 
