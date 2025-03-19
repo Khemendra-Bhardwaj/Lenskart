@@ -1,17 +1,13 @@
 const express = require('express');
-// const {pool, createTables, userPool} = require('./db/init_db');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
 const wishlistRoutes = require('./routes/wishlist');
 const productRoutes = require('./routes/product');
 
-const jwt = require('jsonwebtoken');
-
 const {checkDatabaseHealth} = require("./db/healthCheck")
 const {initializeCache, testRedisConnection} = require('./cache/multiCache')
-
-
 const initializeDatabase = require("./db/init_tables")
+
 
 const cors = require('cors');
 const app = express();
