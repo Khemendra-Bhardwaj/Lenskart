@@ -1,28 +1,24 @@
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Shop from './pages/Shop';
+import CartPage from './pages/CartPage';
+import LoginPage from './pages/LoginPage';
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-function App() {
-  const [message, setMessage] = useState('Lol ! ');
-
-  // useEffect(() => {
-  //   // Replace with your backend's URL
-  //   axios.get('http://localhost:4000/getSomething')
-  //     .then((response) => {
-  //       setMessage(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching data:', error);
-  //     });
-  // }, []);
-
+const App = () => {
   return (
-    <div style={{ textAlign: 'center', padding: '50px' }}>
-      <h1> {message} </h1>
-      <p> Hi </p>
-      
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {/* <Route path="/shop" elemsent={<Shop />} /> */}
+        {/* <Route path="/cart" element={<CartPage />} />
+        <Route path="/login" element={<LoginPage />} /> */}
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

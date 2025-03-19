@@ -14,7 +14,6 @@ router.post('/add', async (req, res) => {
   try {
     const product = await Product.addProduct(name, description, price, stock_quantity);
     await MultiCache.del(ALL_PRODUCTS_CACHE_KEY);
-    // await MultiCache.s
     res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -33,10 +32,6 @@ router.put('/update/:id', async (req, res) => {
     await MultiCache.del(ALL_PRODUCTS_CACHE_KEY); // Invalidate all products cache
     await MultiCache.del(`product:${id}`); // Invalidate single product cache
 
-
-    
-
-
     res.json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -53,7 +48,6 @@ router.delete('/delete/:id', async (req, res) => {
      // Invalidate cache
      await MultiCache.del(ALL_PRODUCTS_CACHE_KEY); // Invalidate all products cache
      await MultiCache.del(`product:${id}`); // Invalidate single product cache
-
 
     res.json(product);
   } catch (err) {
@@ -74,7 +68,6 @@ router.get('/', async (req, res) => {
 
     // Store in cache
     await MultiCache.set(ALL_PRODUCTS_CACHE_KEY, products);
-
     res.json(products);
 
   } catch (err) {
