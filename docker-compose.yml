@@ -43,25 +43,23 @@ services:
       timeout: 5s
       retries: 5
 
-  # orders-db:
-  #   image: postgres:14
-  #   container_name: orders-db
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: ordersDB
-  #   ports:
-  #     - "5434:5432"
-  #   volumes:
-  #     - orders_data:/var/lib/postgresql/data
-  #   networks:
-  #     - app-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --maxmemory 100mb --maxmemory-policy allkeys-lru
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   # Backend Express API
   backend:
@@ -83,16 +81,17 @@ services:
       PRODUCT_DB_USER: postgres
       PRODUCT_DB_PASSWORD: postgres
       PRODUCT_DB_NAME: productDB
-      ORDERS_DB_PORT: 5432
-      ORDERS_DB_HOST: orders-db
-      ORDERS_DB_USER: postgres
-      ORDERS_DB_PASSWORD: postgres
-      ORDERS_DB_NAME: ordersDB
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    env_file:
+      - .env 
     ports:
       - "4000:4000"
     depends_on:
       - user-db
       - product-db
+      - redis 
       # - orders-db
     networks:
       - app-network
@@ -105,7 +104,8 @@ services:
 volumes:
   user_data:
   product_data:
-  orders_data:
+  redis-data: 
+  # orders_data:
 
 networks:
   app-network:

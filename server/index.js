@@ -1,13 +1,13 @@
 const express = require('express');
-// const {pool, createTables, userPool} = require('./db/init_db');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
 const wishlistRoutes = require('./routes/wishlist');
-
-const jwt = require('jsonwebtoken');
+const productRoutes = require('./routes/product');
 
 const {checkDatabaseHealth} = require("./db/healthCheck")
+const {initializeCache, testRedisConnection} = require('./cache/multiCache')
 const initializeDatabase = require("./db/init_tables")
+
 
 const cors = require('cors');
 const app = express();
@@ -22,25 +22,28 @@ app.use(cors());
 app.use('/auth', authRoutes);
 app.use('/cart', cartRoutes); // Cart routes
 app.use('/wishlist', wishlistRoutes); // Wishlist routes
-// app.use('/cart', )
+app.use('/products', productRoutes);
 
 
 app.get('/health', async (req, res) => {
   try {
     const dbStatus = await checkDatabaseHealth();
+
+    // Check Redis connection
+    await testRedisConnection()
     res.status(200).json({
       status: 'ok',
-      databases: dbStatus
+      databases: dbStatus,
+      redis: 'ok',
     });
-    console.log("All DBs Up")
+    console.log('All DBs and Redis are up');
   } catch (error) {
     res.status(500).json({
       status: 'error',
-      message: 'Health check failed'
+      message: 'Health check failed',
     });
   }
 });
-
 
 
 app.get('/', (req, res) => {
@@ -48,11 +51,12 @@ app.get('/', (req, res) => {
 });
 
 
-
 app.listen(PORT, async () => {
   try {
     await initializeDatabase(); // Initialize the database
+    await initializeCache();
     console.log(`Server running on http://localhost:${PORT}`);
+    
   } catch (err) {
     console.error('Failed to initialize database:', err);
     process.exit(1); // Exit the process if initialization fails

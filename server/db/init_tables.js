@@ -11,10 +11,7 @@ const initializeDatabase = async () => {
     await User.createTable();
     await Product.createTable();
 
-    // // TODO : WTF is this ?? , implement a retry mechanism 
-    // console.log('Waiting for 5 seconds before creating dependent tables...');
-    // await new Promise((resolve) => setTimeout(resolve, 5000)); // 5-second delay
-
+    // TODO : Implement a retry mechanism and implement a circuit breaker 
     await Cart.createTable();
     await Wishlist.createTable();
     
