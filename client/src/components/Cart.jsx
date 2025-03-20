@@ -23,7 +23,7 @@ const Cart = () => {
     fetchCartItems();
   }, []);
 
-  // Remove item from cart
+  // Remove item from cart]
   const handleRemoveFromCart = async (productId) => {
     try {
       const token = localStorage.getItem('token');
