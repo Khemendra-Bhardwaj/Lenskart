@@ -57,10 +57,19 @@ class Cart {
   static async getCartItems(userId) {
     const client = await userPool.connect();
     try {
+      // const result = await client.query(
+      //   'SELECT * FROM carts WHERE user_id = $1',
+      //   [userId]
+      // );
       const result = await client.query(
-        'SELECT * FROM carts WHERE user_id = $1',
+        `SELECT carts.id, carts.user_id, carts.product_id, carts.quantity, carts.created_at, 
+                products.name, products.description, products.price, products.stock_quantity
+         FROM carts
+         JOIN products ON carts.product_id = products.id
+         WHERE carts.user_id = $1`,
         [userId]
       );
+      
       return result.rows;
     } catch (err) {
       console.error('Error fetching cart items:', err);

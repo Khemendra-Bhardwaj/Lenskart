@@ -58,10 +58,19 @@ class Wishlist {
   static async getWishlistItems(userId) {
     const client = await userPool.connect();
     try {
+      // const result = await client.query(
+      //   'SELECT * FROM wishlists WHERE user_id = $1',
+      //   [userId]
+      // );
       const result = await client.query(
-        'SELECT * FROM wishlists WHERE user_id = $1',
+        `SELECT wishlists.id, wishlists.user_id, wishlists.product_id, wishlists.created_at, 
+                products.name, products.description, products.price, products.stock_quantity
+         FROM wishlists
+         JOIN products ON wishlists.product_id = products.id
+         WHERE wishlists.user_id = $1`,
         [userId]
       );
+      
       return result.rows;
     } catch (err) {
       console.error('Error fetching wishlist items:', err);

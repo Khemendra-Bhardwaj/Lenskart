@@ -150,5 +150,4 @@ const EyewearCardsRow = () => {
    </div>
  );
 };
-
 export default EyewearCardsRow;

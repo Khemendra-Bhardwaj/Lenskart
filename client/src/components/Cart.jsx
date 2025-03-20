@@ -48,18 +48,16 @@ const Cart = () => {
     <div className="cart">
       <h2>Your Cart</h2>
       {cartItems.map((item) => (
-        <div key={item.id} className="cart-item">
-          <h3>{item.name}</h3>
-          <p>Quantity: {item.quantity}</p>
-          {/* <button onClick={() => handleRemoveFromCart(item.productId)}>Remove</button> */}
-          <button onClick={() => {
-            handleRemoveFromCart(item.product_id);
-          }}>
-            Remove
-          </button>
+    <div key={item.id} className="cart-item">
+      <h3>{item.name}</h3>
+      <p>Description: {item.description}</p>
+      <p>Price: ${item.price}</p>
+        <p>Quantity: {item.quantity}</p>
+        <p>Stock Quantity: {item.stock_quantity}</p>
+        <button onClick={() => handleRemoveFromCart(item.product_id)}>Remove</button>
+      </div>
+    ))}
 
-        </div>
-      ))}
     </div>
   );
 };
