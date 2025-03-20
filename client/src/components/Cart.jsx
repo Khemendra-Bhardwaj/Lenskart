@@ -57,7 +57,6 @@ const Cart = () => {
         <button onClick={() => handleRemoveFromCart(item.product_id)}>Remove</button>
       </div>
     ))}
-
     </div>
   );
 };

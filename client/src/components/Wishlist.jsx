@@ -29,7 +29,7 @@ const Wishlist = () => {
       const token = localStorage.getItem('token');
       await axios.delete('http://localhost:4000/wishlist/remove', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, 
         },
         data: { productId }, // Axios DELETE with a body requires `data`
       });
